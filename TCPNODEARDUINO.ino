@@ -130,10 +130,10 @@ void loop(void)
         Serial.println(" err");
     }
   
-    delay(3000);
+   /* delay(3000);
     mux_id++;
     if (mux_id >= 5) {
         mux_id = 0;
-    }
+    }*/
 }
 
