@@ -36,6 +36,7 @@ DHT dht(DHTPIN, DHTTYPE);
 int pinopir = 7; 
 int retorno = 0;
 
+void(* resetFunc) (void) = 0; 
 
 void setup(void)
 {
@@ -79,61 +80,61 @@ void loop(void)
         Serial.print("create tcp ");
         Serial.print(mux_id);
         Serial.println(" ok");
+
+
+        int estado = analogRead(A5);  //Lê o valor fornecido pelo LDR  
+   
+        String paramsArduino = "";
+        String luminosidade = "#luminosidade:"+String(estado)+"";
+    
+        dht.begin();
+        float t = dht.readTemperature();
+               
+        String temperatura = "#temperatura:"+String(t)+"";
+         
+        retorno = digitalRead(pinopir);   
+        String movimentacao = "#movimentacao:"+String(retorno);
+      
+        paramsArduino.concat(luminosidade);
+        paramsArduino.concat(temperatura);
+        paramsArduino.concat(movimentacao);
+        
+        char* params = new char[paramsArduino.length()+1];
+        strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
+    
+        if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
+            Serial.println("send ok");
+        } else {
+            Serial.println("send err");
+        }
+        
+        uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 10000);
+        if (len > 0) {
+            
+            String str = (char*)buffer; 
+            if(str.equals("liga_luz")){
+                Serial.println("LIGANDO A LUZ");
+            }
+        }
+     
+        if (wifi.releaseTCP(mux_id)) {
+            Serial.print("release tcp ");
+            Serial.print(mux_id);
+            Serial.println(" ok");
+        } else {
+            Serial.print("release tcp ");
+            Serial.print(mux_id);
+            Serial.println(" err");
+        }
+
+        
     } else {
         Serial.print("create tcp ");
         Serial.print(mux_id);
         Serial.println(" err");
+        resetFunc();
     }
 
-    int estado = analogRead(A5);  //Lê o valor fornecido pelo LDR  
-   
-    String paramsArduino = "";
-    String luminosidade = "#luminosidade:"+String(estado)+"";
-
-    dht.begin();
-    float t = dht.readTemperature();
-           
-    String temperatura = "#temperatura:"+String(t)+"";
-     
-    retorno = digitalRead(pinopir);   
-    String movimentacao = "#movimentacao:"+String(retorno);
-  
-    paramsArduino.concat(luminosidade);
-    paramsArduino.concat(temperatura);
-    paramsArduino.concat(movimentacao);
-    
-    char* params = new char[paramsArduino.length()+1];
-    strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
-
-    if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
-        Serial.println("send ok");
-    } else {
-        Serial.println("send err");
-    }
-    
-    uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 10000);
-    if (len > 0) {
-        
-        String str = (char*)buffer; 
-        if(str.equals("liga_luz")){
-            Serial.println("LIGANDO A LUZ");
-        }
-    }
- 
-    if (wifi.releaseTCP(mux_id)) {
-        Serial.print("release tcp ");
-        Serial.print(mux_id);
-        Serial.println(" ok");
-    } else {
-        Serial.print("release tcp ");
-        Serial.print(mux_id);
-        Serial.println(" err");
-    }
-  
-   /* delay(3000);
-    mux_id++;
-    if (mux_id >= 5) {
-        mux_id = 0;
-    }*/
 }
+
 
