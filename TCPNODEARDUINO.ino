@@ -71,6 +71,7 @@ void setup(void)
     pinMode(pinopir, INPUT);
     pinMode(8, OUTPUT); 
     Serial.print("setup end\r\n");
+    int estado_luz = 0;
 }
 
 void loop(void)
@@ -118,10 +119,12 @@ void loop(void)
             if(str.equals("liga_luz")){
                 Serial.println("LIGANDO A LUZ");
                 digitalWrite(8, LOW);
+                estado_luz = LOW;
             }
             if(str.equals("desliga_luz")){
                 Serial.println("DESLIGANDO A LUZ");
                 digitalWrite(8, HIGH);
+                estado_luz = HIGH;
             }
         }
      
