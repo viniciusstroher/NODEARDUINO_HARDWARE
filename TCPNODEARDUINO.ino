@@ -60,6 +60,7 @@ void setup(void)
         Serial.println(wifi.getLocalIP().c_str());
     } else {
         Serial.print("Join AP failure\r\n");
+        resetFunc();
     }
     
     if (wifi.enableMUX()) {
