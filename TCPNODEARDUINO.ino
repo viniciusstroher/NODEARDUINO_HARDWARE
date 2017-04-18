@@ -71,14 +71,14 @@ void setup(void)
     pinMode(pinopir, INPUT);
     pinMode(8, OUTPUT); 
     Serial.print("setup end\r\n");
-    int estado_luz = 0;
+    
 }
 
 void loop(void)
 {
     uint8_t buffer[128] = {0};
     static uint8_t mux_id = 0;
-    
+    int estado_luz = 0;
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
         Serial.print("create tcp ");
         Serial.print(mux_id);
