@@ -68,6 +68,7 @@ void setup(void)
         Serial.print("multiple err\r\n");
     }
     pinMode(pinopir, INPUT);
+    pinMode(8, OUTPUT); 
     Serial.print("setup end\r\n");
 }
 
@@ -105,7 +106,8 @@ void loop(void)
         if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
             Serial.println("send ok");
         } else {
-            Serial.println("send err");
+            Serial.println("send err"); 
+           
         }
         
         uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 10000);
@@ -114,6 +116,11 @@ void loop(void)
             String str = (char*)buffer; 
             if(str.equals("liga_luz")){
                 Serial.println("LIGANDO A LUZ");
+                digitalWrite(8, LOW);
+            }
+            if(str.equals("desliga_luz")){
+                Serial.println("DESLIGANDO A LUZ");
+                digitalWrite(8, HIGH);
             }
         }
      
@@ -125,9 +132,10 @@ void loop(void)
             Serial.print("release tcp ");
             Serial.print(mux_id);
             Serial.println(" err");
+            
         }
-
         
+        delay(1000);
     } else {
         Serial.print("create tcp ");
         Serial.print(mux_id);
