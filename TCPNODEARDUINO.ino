@@ -38,79 +38,66 @@ int retorno = 0;
 
 void(* resetFunc) (void) = 0; 
 
+static uint8_t mux_id = 0;
+
 void setup(void)
 {
     Serial1.begin(115200);
     Serial.begin(9600);
-    Serial.print("setup begin\r\n");
-
-    Serial.print("FW Version: ");
-    Serial.println(wifi.getVersion().c_str());
-    
-    
-    if (wifi.setOprToStationSoftAP()) {
-        Serial.print("to station + softap ok\r\n");
-    } else {
-        Serial.print("to station + softap err\r\n");
-    }
+    wifi.setOprToStationSoftAP();
 
     if (wifi.joinAP(SSID, PASSWORD)) {
-        Serial.print("Join AP success\r\n");
-        Serial.print("IP: ");       
+        Serial.print("CONECTADO ! IP: ");       
         Serial.println(wifi.getLocalIP().c_str());
     } else {
         Serial.print("Join AP failure\r\n");
         resetFunc();
     }
     
-    if (wifi.enableMUX()) {
-        Serial.print("multiple ok\r\n");
-    } else {
-        Serial.print("multiple err\r\n");
-    }
+    wifi.enableMUX();
+    
     pinMode(pinopir, INPUT);
     pinMode(8, OUTPUT); 
-    Serial.print("setup end\r\n");
     
 }
 
 void loop(void)
 {
 
-    static uint8_t mux_id = 0;
-    
-    int estado = analogRead(A5);  //Lê o valor fornecido pelo LDR  
-
-    String paramsArduino = "";
-    String luminosidade = "#luminosidade:"+String(estado)+"";
-
-    dht.begin();
-    float t = dht.readTemperature();
-         
-    String temperatura = "#temperatura:"+String(t)+"";
-   
-    retorno = digitalRead(pinopir);   
-    String movimentacao = "#movimentacao:"+String(retorno);
-
-    paramsArduino.concat(luminosidade);
-    paramsArduino.concat(temperatura);
-    paramsArduino.concat(movimentacao);
-    
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
-        Serial.print("init tcp ");
-
-        char* params = new char[paramsArduino.length()+1];
-        strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
+        Serial.print("init tcp");
+       
+    
+         int estado = analogRead(A5);  //Lê o valor fornecido pelo LDR  
+      
+         String paramsArduino = "";
+         String luminosidade = "#luminosidade:"+String(estado)+"";
+      
+         dht.begin();
+         float t = dht.readTemperature();
+               
+         String temperatura = "#temperatura:"+String(t)+"";
+         
+         retorno = digitalRead(pinopir);   
+         String movimentacao = "#movimentacao:"+String(retorno);
+      
+         paramsArduino.concat(luminosidade);
+         paramsArduino.concat(temperatura);
+         paramsArduino.concat(movimentacao);
+         
+         char* params = new char[paramsArduino.length()+1];
+         strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
         
-        if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
+         if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
            Serial.println("Enviando: "+String(params));
-        } else {
+         } else {
             Serial.println("send err"); 
-        }
-        
-        uint8_t buffer[128] = {0};
-        uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 100);
-        if (len > 0) {
+         }
+         
+         uint8_t buffer[128] = {0};
+         uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 100);
+         
+         if (len > 0) {
             String str = (char*)buffer; 
             if(str.equals("liga_luz")){
                 Serial.println("LIGANDO A LUZ");
@@ -120,17 +107,15 @@ void loop(void)
                 Serial.println("DESLIGANDO A LUZ");
                 digitalWrite(8, HIGH); 
             }
-        }
+         }
       
-        if (!wifi.releaseTCP(mux_id)) {
+         if (!wifi.releaseTCP(mux_id)) {
           Serial.println("ERROR release tcp");
-        }
-        
-       delay(2000);
-    } else {
+         }
+     } else {
         Serial.print("reset arduino");
         resetFunc();
-    }
+     }
 
 }
 
