@@ -76,74 +76,59 @@ void setup(void)
 
 void loop(void)
 {
-    uint8_t buffer[128] = {0};
+
     static uint8_t mux_id = 0;
-    int estado_luz = 0;
-    if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
-        Serial.print("create tcp ");
-        Serial.print(mux_id);
-        Serial.println(" ok");
-
-
-        int estado = analogRead(A5);  //Lê o valor fornecido pelo LDR  
-   
-        String paramsArduino = "";
-        String luminosidade = "#luminosidade:"+String(estado)+"";
     
-        dht.begin();
-        float t = dht.readTemperature();
-               
-        String temperatura = "#temperatura:"+String(t)+"";
+    int estado = analogRead(A5);  //Lê o valor fornecido pelo LDR  
+
+    String paramsArduino = "";
+    String luminosidade = "#luminosidade:"+String(estado)+"";
+
+    dht.begin();
+    float t = dht.readTemperature();
          
-        retorno = digitalRead(pinopir);   
-        String movimentacao = "#movimentacao:"+String(retorno);
-      
-        paramsArduino.concat(luminosidade);
-        paramsArduino.concat(temperatura);
-        paramsArduino.concat(movimentacao);
-        
+    String temperatura = "#temperatura:"+String(t)+"";
+   
+    retorno = digitalRead(pinopir);   
+    String movimentacao = "#movimentacao:"+String(retorno);
+
+    paramsArduino.concat(luminosidade);
+    paramsArduino.concat(temperatura);
+    paramsArduino.concat(movimentacao);
+    
+    if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
+        Serial.print("init tcp ");
+
         char* params = new char[paramsArduino.length()+1];
         strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
-    
+        
         if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
-            Serial.println("send ok");
+           Serial.println("Enviando: "+String(params));
         } else {
             Serial.println("send err"); 
-           
         }
         
-        uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 10000);
+        uint8_t buffer[128] = {0};
+        uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 100);
         if (len > 0) {
-            
             String str = (char*)buffer; 
             if(str.equals("liga_luz")){
                 Serial.println("LIGANDO A LUZ");
                 digitalWrite(8, LOW);
-                estado_luz = LOW;
             }
             if(str.equals("desliga_luz")){
                 Serial.println("DESLIGANDO A LUZ");
-                digitalWrite(8, HIGH);
-                estado_luz = HIGH;
+                digitalWrite(8, HIGH); 
             }
         }
-     
-        if (wifi.releaseTCP(mux_id)) {
-            Serial.print("release tcp ");
-            Serial.print(mux_id);
-            Serial.println(" ok");
-        } else {
-            Serial.print("release tcp ");
-            Serial.print(mux_id);
-            Serial.println(" err");
-            
+      
+        if (!wifi.releaseTCP(mux_id)) {
+          Serial.println("ERROR release tcp");
         }
         
-        delay(1000);
+       delay(2000);
     } else {
-        Serial.print("create tcp ");
-        Serial.print(mux_id);
-        Serial.println(" err");
+        Serial.print("reset arduino");
         resetFunc();
     }
 
