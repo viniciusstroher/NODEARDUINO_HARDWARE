@@ -39,11 +39,24 @@ int retorno = 0;
 void(* resetFunc) (void) = 0; 
 
 static uint8_t mux_id = 0;
+int calibrationTime = 30;        
 
 void setup(void)
 {
     Serial1.begin(115200);
     Serial.begin(9600);
+  
+    Serial.print("calibrating sensor ");
+      for(int i = 0; i < calibrationTime; i++){
+        Serial.print(".");
+        delay(1000);
+        }
+      Serial.println(" done");
+      Serial.println("SENSOR ACTIVE");
+      delay(50);
+    }
+
+    
     wifi.setOprToStationSoftAP();
 
     if (wifi.joinAP(SSID, PASSWORD)) {
