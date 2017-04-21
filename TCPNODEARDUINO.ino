@@ -42,11 +42,13 @@ static uint8_t mux_id = 0;
 
 void setup(void)
 {
+    pinMode(pinopir, INPUT);
+    pinMode(8, OUTPUT); 
+    
     Serial1.begin(115200);
     Serial.begin(9600);
    
-    //wifi.setOprToStationSoftAP();
-
+    wifi.setOprToStation();
     if (wifi.joinAP(SSID, PASSWORD)) {
         Serial.print("CONECTADO ! IP: ");       
         Serial.println(wifi.getLocalIP().c_str());
@@ -55,13 +57,13 @@ void setup(void)
         resetFunc();
     }
     
+    wifi.disableMUX();
     if(!wifi.enableMUX()){
       Serial.println("Reset arduino - enable mux failed");
-      resetFunc();
+      //resetFunc();
     }
     
-    pinMode(pinopir, INPUT);
-    pinMode(8, OUTPUT); 
+    
     
 }
 
@@ -110,11 +112,11 @@ void loop(void)
       
          if (!wifi.releaseTCP(mux_id)) {
           Serial.println("Reset arduino - release tcp");
-          resetFunc();
+          //resetFunc();
          }
      } else {
         Serial.println("Reset arduino - tcp not create");
-        resetFunc();
+        //resetFunc();
      }
 }
 
