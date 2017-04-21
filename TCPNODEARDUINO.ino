@@ -47,14 +47,14 @@ void setup(void)
     Serial.begin(9600);
   
     Serial.print("calibrating sensor ");
-      for(int i = 0; i < calibrationTime; i++){
+    for(int i = 0; i < calibrationTime; i++){
         Serial.print(".");
         delay(1000);
-        }
-      Serial.println(" done");
-      Serial.println("SENSOR ACTIVE");
-      delay(50);
     }
+    Serial.println(" done");
+    Serial.println("SENSOR ACTIVE");
+    delay(50);
+    
 
     
     wifi.setOprToStationSoftAP();
