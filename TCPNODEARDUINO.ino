@@ -39,35 +39,26 @@ int retorno = 0;
 void(* resetFunc) (void) = 0; 
 
 static uint8_t mux_id = 0;
-int calibrationTime = 30;        
 
 void setup(void)
 {
     Serial1.begin(115200);
     Serial.begin(9600);
-  
-    Serial.print("calibrating sensor ");
-    for(int i = 0; i < calibrationTime; i++){
-        Serial.print(".");
-        delay(1000);
-    }
-    Serial.println(" done");
-    Serial.println("SENSOR ACTIVE");
-    delay(50);
-    
-
-    
-    wifi.setOprToStationSoftAP();
+   
+    //wifi.setOprToStationSoftAP();
 
     if (wifi.joinAP(SSID, PASSWORD)) {
         Serial.print("CONECTADO ! IP: ");       
         Serial.println(wifi.getLocalIP().c_str());
     } else {
-        Serial.print("Join AP failure\r\n");
+        Serial.println("Reset arduino - join ap failure");
         resetFunc();
     }
     
-    wifi.enableMUX();
+    if(!wifi.enableMUX()){
+      Serial.println("Reset arduino - enable mux failed");
+      resetFunc();
+    }
     
     pinMode(pinopir, INPUT);
     pinMode(8, OUTPUT); 
@@ -78,9 +69,6 @@ void loop(void)
 {
 
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
-        Serial.print("init tcp");
-       
-    
          int estado = analogRead(A5);  //Lê o valor fornecido pelo LDR  
       
          String paramsArduino = "";
@@ -102,9 +90,7 @@ void loop(void)
          strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
         
          if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
-           Serial.println("Enviando: "+String(params));
-         } else {
-            Serial.println("send err"); 
+           Serial.println("Enviando: "+paramsArduino);
          }
          
          uint8_t buffer[128] = {0};
@@ -123,11 +109,11 @@ void loop(void)
          }
       
          if (!wifi.releaseTCP(mux_id)) {
-          Serial.println("ERROR release tcp");
+          Serial.println("Reset arduino - release tcp");
           resetFunc();
          }
      } else {
-        Serial.print("reset arduino");
+        Serial.println("Reset arduino - tcp not create");
         resetFunc();
      }
 }
