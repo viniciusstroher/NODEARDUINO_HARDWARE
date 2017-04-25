@@ -86,11 +86,11 @@ void loop(void)
       
          if (!wifi.releaseTCP(mux_id)) {
           Serial.println("Reset arduino - release tcp");
-          resetFunc();
+          wifi.restart();
          }
      } else {
         Serial.println("Reset arduino - tcp not create");
-        resetFunc();
+        wifi.restart();
      }
 }
 
