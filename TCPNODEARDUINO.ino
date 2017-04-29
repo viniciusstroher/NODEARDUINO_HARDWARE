@@ -52,6 +52,8 @@ String luminosidade  = "";
 String temperatura   = "";
 String movimentacao  = "";
 String movimentacao2  = "";
+String voltage       = "";
+
 int estado           = 0;
 float t              = 0;
 uint8_t buffer[128]  = {0};
@@ -82,7 +84,7 @@ void loop(void)
          float Irms            = emon1.Irms;             //extract Irms into Variable
          String voltage = "realPower:"+String(realPower)+"apparentPower:"+String(apparentPower)+"powerFActor:"+String(powerFActor)+"supplyVoltage:"+String(supplyVoltage)+"Irms:"+String(Irms);
          */
-         String voltage = "}";
+         voltage = "}";
          paramsArduino.concat(luminosidade);
          paramsArduino.concat(temperatura);
          paramsArduino.concat(movimentacao);
