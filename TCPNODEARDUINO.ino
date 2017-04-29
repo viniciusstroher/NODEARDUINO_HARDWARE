@@ -1,3 +1,5 @@
+#include <EmonLib.h>
+
 #include "ESP8266.h"
 
 #define SSID        "Venizao"
@@ -12,9 +14,13 @@ static uint8_t mux_id = 0;
 #define DHTPIN 2
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
-
+EnergyMonitor emon1;  
 int pinopir = 7; 
+int pinopir2 = 6; 
+
 int retorno = 0;
+
+int retorno2 = 0;
 
 void(* resetFunc) (void) = 0; 
 
@@ -26,48 +32,70 @@ void setup(void)
     Serial1.begin(115200);
     Serial.begin(9600);
     
-    //wifi.setOprToStation();
+    wifi.setOprToStation();
     if (wifi.joinAP(SSID, PASSWORD)) {
         Serial.print("CONECTADO ! IP: ");       
         Serial.println(wifi.getLocalIP().c_str());
-        wifi.enableMUX();
+        if(!wifi.enableMUX()){
+           resetFunc();
+        }
     } else {
-        Serial.println("Reset arduino - join ap failure");
         resetFunc();
     }
-    delay(1000);
+    
     dht.begin();
+    emon1.current(A1, 60);
 }
 
 String paramsArduino = "";
 String luminosidade  = "";
 String temperatura   = "";
 String movimentacao  = "";
+String movimentacao2  = "";
 int estado           = 0;
 float t              = 0;
 uint8_t buffer[128]  = {0};
          
 void loop(void)
 {
-
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
    
          estado       =  analogRead(A5);  //Lê o valor fornecido pelo LDR  
-         luminosidade = "#luminosidade:"+String(estado)+"";
+         luminosidade = "{ \"luminosidade\" : \""+String(estado)+"\" , ";
          t            = dht.readTemperature();
-         temperatura  = "#temperatura:"+String(t)+"";
+         temperatura  = "\"temperatura\" :\""+String(t)+"\" , ";
+         
          retorno      = digitalRead(pinopir);   
-         movimentacao = "#movimentacao:"+String(retorno);
-      
+         movimentacao = "\"movimentacao\" : \""+String(retorno)+"\" , ";
+         
+         retorno2      = digitalRead(pinopir2);   
+         movimentacao2 = "\"movimentacao2\" : \""+String(retorno2)+"\"";
+
+         
+       /* emon1.calcVI(20,2000);         // Calculate all. No.of half wavelengths (crossings), time-out
+        emon1.serialprint();           // Print out all variables (realpower, apparent power, Vrms, Irms, power factor)
+        
+         float realPower       = emon1.realPower;        //extract Real Power into variable
+         float apparentPower   = emon1.apparentPower;    //extract Apparent Power into variable
+         float powerFActor     = emon1.powerFactor;      //extract Power Factor into Variable
+         float supplyVoltage   = emon1.Vrms;             //extract Vrms into Variable
+         float Irms            = emon1.Irms;             //extract Irms into Variable
+         String voltage = "realPower:"+String(realPower)+"apparentPower:"+String(apparentPower)+"powerFActor:"+String(powerFActor)+"supplyVoltage:"+String(supplyVoltage)+"Irms:"+String(Irms);
+         */
+         String voltage = "}";
          paramsArduino.concat(luminosidade);
          paramsArduino.concat(temperatura);
          paramsArduino.concat(movimentacao);
+         paramsArduino.concat(movimentacao2);
+         paramsArduino.concat(voltage);
          
          char* params = new char[paramsArduino.length()+1];
          strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
         
          if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
            Serial.println("Enviando: "+paramsArduino);
+         }else{
+           resetFunc();
          }
          paramsArduino = "";
          
@@ -85,13 +113,16 @@ void loop(void)
          }
       
          if (!wifi.releaseTCP(mux_id)) {
-          Serial.println("Reset arduino - release tcp");
-          wifi.restart();
+          Serial.println("release tcp");
+          resetFunc();
          }
      } else {
-        Serial.println("Reset arduino - tcp not create");
-        wifi.restart();
+        Serial.println(" tcp not create");
+        resetFunc();
+        
      }
+
+     //delay(2000);
 }
 
 
