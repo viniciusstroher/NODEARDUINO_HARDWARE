@@ -53,11 +53,11 @@ String temperatura   = "";
 String movimentacao  = "";
 String movimentacao2  = "";
 String voltage       = "";
-
+uint8_t buffer[128];
 int estado           = 0;
 float t              = 0;
-uint8_t buffer[128]  = {0};
-         
+
+char* params;    
 void loop(void)
 {
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
@@ -91,28 +91,35 @@ void loop(void)
          paramsArduino.concat(movimentacao2);
          paramsArduino.concat(voltage);
          
-         char* params = new char[paramsArduino.length()+1];
+         params = new char[paramsArduino.length()+1];
          strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
+         
+         
+        buffer[128]  = {0};
+         
+         uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 1000);         
+         if (len > 0) {
+            String str = (char*)buffer;
+            Serial.println("Recebido: "+str); 
+            if(str.indexOf("abre_rele_luz") != -1){
+                Serial.println("LIGANDO A LUZ");
+                digitalWrite(8, LOW);
+            }
+            if(str.indexOf("fecha_rele_luz") != -1){
+                Serial.println("DESLIGANDO A LUZ");
+                digitalWrite(8, HIGH); 
+            }
+         }
         
          if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
            Serial.println("Enviando: "+paramsArduino);
+           //wifi.enableMUX();
          }else{
            resetFunc();
          }
          paramsArduino = "";
          
-         uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 100);         
-         if (len > 0) {
-            String str = (char*)buffer; 
-            if(str.equals("liga_luz")){
-                Serial.println("LIGANDO A LUZ");
-                digitalWrite(8, LOW);
-            }
-            if(str.equals("desliga_luz")){
-                Serial.println("DESLIGANDO A LUZ");
-                digitalWrite(8, HIGH); 
-            }
-         }
+         
       
          if (!wifi.releaseTCP(mux_id)) {
           Serial.println("release tcp");
@@ -124,7 +131,7 @@ void loop(void)
         
      }
 
-     //delay(2000);
+     delay(2000);
 }
 
 
