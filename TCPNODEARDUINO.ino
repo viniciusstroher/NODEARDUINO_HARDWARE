@@ -61,7 +61,7 @@ char* params;
 void loop(void)
 {
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
-   
+         paramsArduino = "";
          estado       =  analogRead(A5);  //Lê o valor fornecido pelo LDR  
          luminosidade = "{ \"luminosidade\" : \""+String(estado)+"\" , ";
          t            = dht.readTemperature();
@@ -117,7 +117,7 @@ void loop(void)
          }else{
            resetFunc();
          }
-         paramsArduino = "";
+         
          
          
       
