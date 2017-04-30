@@ -61,40 +61,7 @@ char* params;
 void loop(void)
 {
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
-         paramsArduino = "";
-         estado       =  analogRead(A5);  //Lê o valor fornecido pelo LDR  
-         luminosidade = "{ \"luminosidade\" : \""+String(estado)+"\" , ";
-         t            = dht.readTemperature();
-         temperatura  = "\"temperatura\" :\""+String(t)+"\" , ";
-         
-         retorno      = digitalRead(pinopir);   
-         movimentacao = "\"movimentacao\" : \""+String(retorno)+"\" , ";
-         
-         retorno2      = digitalRead(pinopir2);   
-         movimentacao2 = "\"movimentacao2\" : \""+String(retorno2)+"\"";
-
-         
-       /* emon1.calcVI(20,2000);         // Calculate all. No.of half wavelengths (crossings), time-out
-        emon1.serialprint();           // Print out all variables (realpower, apparent power, Vrms, Irms, power factor)
         
-         float realPower       = emon1.realPower;        //extract Real Power into variable
-         float apparentPower   = emon1.apparentPower;    //extract Apparent Power into variable
-         float powerFActor     = emon1.powerFactor;      //extract Power Factor into Variable
-         float supplyVoltage   = emon1.Vrms;             //extract Vrms into Variable
-         float Irms            = emon1.Irms;             //extract Irms into Variable
-         String voltage = "realPower:"+String(realPower)+"apparentPower:"+String(apparentPower)+"powerFActor:"+String(powerFActor)+"supplyVoltage:"+String(supplyVoltage)+"Irms:"+String(Irms);
-         */
-         voltage = "}";
-         paramsArduino.concat(luminosidade);
-         paramsArduino.concat(temperatura);
-         paramsArduino.concat(movimentacao);
-         paramsArduino.concat(movimentacao2);
-         paramsArduino.concat(voltage);
-         
-         params = new char[paramsArduino.length()+1];
-         strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
-         
-         
         buffer[128]  = {0};
          
          uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 1000);         
@@ -109,18 +76,49 @@ void loop(void)
                 Serial.println("DESLIGANDO A LUZ");
                 digitalWrite(8, HIGH); 
             }
+         }else{
+
+             paramsArduino = "";
+             estado       =  analogRead(A5);  //Lê o valor fornecido pelo LDR  
+             luminosidade = "{ \"luminosidade\" : \""+String(estado)+"\" , ";
+             t            = dht.readTemperature();
+             temperatura  = "\"temperatura\" :\""+String(t)+"\" , ";
+             
+             retorno      = digitalRead(pinopir);   
+             movimentacao = "\"movimentacao\" : \""+String(retorno)+"\" , ";
+             
+             retorno2      = digitalRead(pinopir2);   
+             movimentacao2 = "\"movimentacao2\" : \""+String(retorno2)+"\"";
+    
+             
+           /* emon1.calcVI(20,2000);         // Calculate all. No.of half wavelengths (crossings), time-out
+            emon1.serialprint();           // Print out all variables (realpower, apparent power, Vrms, Irms, power factor)
+            
+             float realPower       = emon1.realPower;        //extract Real Power into variable
+             float apparentPower   = emon1.apparentPower;    //extract Apparent Power into variable
+             float powerFActor     = emon1.powerFactor;      //extract Power Factor into Variable
+             float supplyVoltage   = emon1.Vrms;             //extract Vrms into Variable
+             float Irms            = emon1.Irms;             //extract Irms into Variable
+             String voltage = "realPower:"+String(realPower)+"apparentPower:"+String(apparentPower)+"powerFActor:"+String(powerFActor)+"supplyVoltage:"+String(supplyVoltage)+"Irms:"+String(Irms);
+             */
+             voltage = "}";
+             paramsArduino.concat(luminosidade);
+             paramsArduino.concat(temperatura);
+             paramsArduino.concat(movimentacao);
+             paramsArduino.concat(movimentacao2);
+             paramsArduino.concat(voltage);
+             
+             params = new char[paramsArduino.length()+1];
+             strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
+             if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
+               Serial.println("Enviando: "+paramsArduino);
+               
+             }else{
+               resetFunc();
+             }
          }
         
-         if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
-           Serial.println("Enviando: "+paramsArduino);
-           //wifi.enableMUX();
-         }else{
-           resetFunc();
-         }
          
-         
-         
-      
          if (!wifi.releaseTCP(mux_id)) {
           Serial.println("release tcp");
           resetFunc();
