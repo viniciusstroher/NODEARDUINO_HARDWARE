@@ -2,9 +2,9 @@
 
 #include "ESP8266.h"
 
-#define SSID        "Venizao"
-#define PASSWORD    "venizao123"
-#define HOST_NAME   "192.168.0.56"
+#define SSID        "COBRE"
+#define PASSWORD    "robotica"
+#define HOST_NAME   "192.168.25.2"
 #define HOST_PORT   (8090)
 
 ESP8266 wifi(Serial1);
@@ -15,11 +15,11 @@ static uint8_t mux_id = 0;
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 EnergyMonitor emon1;  
+
 int pinopir = 7; 
 int pinopir2 = 6; 
 
 int retorno = 0;
-
 int retorno2 = 0;
 
 void(* resetFunc) (void) = 0; 
@@ -27,7 +27,10 @@ void(* resetFunc) (void) = 0;
 void setup(void)
 {
     pinMode(pinopir, INPUT);
-    pinMode(8, OUTPUT); 
+    //reles
+    pinMode(10, OUTPUT);
+    pinMode(11, OUTPUT); 
+    pinMode(12, OUTPUT); 
     
     Serial1.begin(115200);
     Serial.begin(9600);
@@ -68,14 +71,35 @@ void loop(void)
          if (len > 0) {
             String str = (char*)buffer;
             Serial.println("Recebido: "+str); 
-            if(str.indexOf("abre_rele_luz") != -1){
+           
+            if(str.indexOf("abre_rele_luz1") != -1){
                 Serial.println("LIGANDO A LUZ");
-                digitalWrite(8, LOW);
+                digitalWrite(10, LOW);
             }
-            if(str.indexOf("fecha_rele_luz") != -1){
+            if(str.indexOf("fecha_rele_luz1") != -1){
                 Serial.println("DESLIGANDO A LUZ");
-                digitalWrite(8, HIGH); 
+                digitalWrite(10, HIGH); 
             }
+
+            if(str.indexOf("abre_rele_luz2") != -1){
+                Serial.println("LIGANDO A LUZ 2");
+                digitalWrite(11, LOW);
+            }
+            if(str.indexOf("fecha_rele_luz2") != -1){
+                Serial.println("DESLIGANDO A LUZ 2");
+                digitalWrite(11, HIGH); 
+            }
+
+
+            if(str.indexOf("abre_rele_luz3") != -1){
+                Serial.println("LIGANDO A LUZ 3");
+                digitalWrite(12, LOW);
+            }
+            if(str.indexOf("fecha_rele_luz3") != -1){
+                Serial.println("DESLIGANDO A LUZ 3");
+                digitalWrite(12, HIGH); 
+            }
+            
          }else{
 
              paramsArduino = "";
