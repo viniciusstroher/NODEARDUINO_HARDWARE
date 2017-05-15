@@ -148,7 +148,7 @@ void loop(void)
              luminosidade = "{ \"luminosidade\" : \""+String(estado)+"\" , ";
 
              estado2        =  analogRead(A6);  //Lê o valor fornecido pelo LDR  
-             luminosidade2 = "{ \"luminosidade2\" : \""+String(estado2)+"\" , ";
+             luminosidade2 = " \"luminosidade2\" : \""+String(estado2)+"\" , ";
              
              t            = dht.readTemperature();
              temperatura  = "\"temperatura\" :\""+String(t)+"\" , ";
