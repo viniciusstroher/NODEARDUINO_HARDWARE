@@ -127,6 +127,17 @@ void loop(void)
                 Serial.println("DESLIGANDO A LUZ 3");
                 digitalWrite(12, HIGH); 
             }
+  
+            if(str.indexOf("liga_ar_condicionado") != -1){
+                Serial.println("Ligando Ar");
+                
+            }
+
+             if(str.indexOf("liga_projetor") != -1){
+                Serial.println("Ligando Projetor");
+                
+            }
+            
             //executa reles se vier comando do servidor
             
          }else{
