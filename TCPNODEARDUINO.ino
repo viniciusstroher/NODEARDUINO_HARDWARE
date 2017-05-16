@@ -5,7 +5,7 @@
 //configurações do wifi
 #define SSID        "COBRE"
 #define PASSWORD    "robotica"
-#define HOST_NAME   "192.168.25.2"
+#define HOST_NAME   "192.168.0.3"
 #define HOST_PORT   (8090)
 //configurações do wifi
 
@@ -99,11 +99,20 @@ void loop(void)
             //executa reles se vier comando do servidor
             String str = (char*)buffer;
             Serial.println("Recebido: "+str); 
-           
+
+            //regra shutdown
+            if(str.indexOf("shutdown_relays") != -1){
+                Serial.println("DESLIGANDO TUDO");
+                digitalWrite(10, HIGH); 
+                digitalWrite(11, HIGH); 
+                digitalWrite(12, HIGH); 
+            }
+            
             if(str.indexOf("abre_rele_luz1") != -1){
                 Serial.println("LIGANDO A LUZ");
                 digitalWrite(10, LOW);
             }
+            
             if(str.indexOf("fecha_rele_luz1") != -1){
                 Serial.println("DESLIGANDO A LUZ");
                 digitalWrite(10, HIGH); 
@@ -113,6 +122,7 @@ void loop(void)
                 Serial.println("LIGANDO A LUZ 2");
                 digitalWrite(11, LOW);
             }
+            
             if(str.indexOf("fecha_rele_luz2") != -1){
                 Serial.println("DESLIGANDO A LUZ 2");
                 digitalWrite(11, HIGH); 
@@ -126,6 +136,7 @@ void loop(void)
             if(str.indexOf("fecha_rele_luz3") != -1){
                 Serial.println("DESLIGANDO A LUZ 3");
                 digitalWrite(12, HIGH); 
+
             }
   
             if(str.indexOf("liga_ar_condicionado") != -1){
@@ -154,23 +165,23 @@ void loop(void)
              temperatura  = "\"temperatura\" :\""+String(t)+"\" , ";
 
              t2            = dht2.readTemperature();
-             temperatura   = "\"temperatura2\" :\""+String(t2)+"\" , ";
+             temperatura2   = "\"temperatura2\" :\""+String(t2)+"\" , ";
              
              retorno      = digitalRead(pinopir);   
              movimentacao = "\"movimentacao\" : \""+String(retorno)+"\" , ";
              
              retorno2      = digitalRead(pinopir2);   
-             movimentacao2 = "\"movimentacao2\" : \""+String(retorno2)+"\" }";
+             movimentacao2 = "\"movimentacao2\" : \""+String(retorno2)+"\" } ";
             //pega dados dos sensores
-             
+            
              //cria dados para envio do servidor
              paramsArduino.concat(luminosidade);
              paramsArduino.concat(luminosidade2);
              paramsArduino.concat(temperatura);
+             paramsArduino.concat(temperatura2);
              paramsArduino.concat(movimentacao);
              paramsArduino.concat(movimentacao2);
-             
-             
+  
              params = new char[paramsArduino.length()+1];
              strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
              //cria dados para envio do servidor
@@ -195,7 +206,7 @@ void loop(void)
         
      }
      //delay 1minuto
-     delay(60000);
+     //delay(60000);
 }
 
 
