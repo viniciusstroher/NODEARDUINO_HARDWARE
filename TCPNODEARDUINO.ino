@@ -194,8 +194,8 @@ void loop(void)
         resetFunc();
         
      }
-
-     delay(2000);
+     //delay 1minuto
+     delay(60000);
 }
 
 
