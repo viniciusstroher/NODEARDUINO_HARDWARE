@@ -5,7 +5,7 @@
 //configurações do wifi
 #define SSID        "COBRE"
 #define PASSWORD    "robotica"
-#define HOST_NAME   "192.168.0.5"
+#define HOST_NAME   "192.168.0.29"
 #define HOST_PORT   (8090)
 //configurações do wifi
 
