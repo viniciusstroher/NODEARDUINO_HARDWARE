@@ -107,6 +107,13 @@ void loop(void)
                 digitalWrite(11, HIGH); 
                 digitalWrite(12, HIGH); 
             }
+
+            if(str.indexOf("up_app_relays") != -1){
+                Serial.println("LIGANDO TUDO");
+                digitalWrite(10, LOW); 
+                digitalWrite(11, LOW); 
+                digitalWrite(12, LOW); 
+            }
             
             if(str.indexOf("abre_rele_luz1") != -1){
                 Serial.println("LIGANDO A LUZ");
