@@ -3,12 +3,12 @@
 #include "ESP8266.h"
 
 //configurações do wifi
-#define SSID        "COBRE"
-#define PASSWORD    "robotica"
-//#define SSID        "Venizao"
-//#define PASSWORD    "venizao123"
+//#define SSID        "COBRE"
+//#define PASSWORD    "robotica"
+#define SSID        "Venizao"
+#define PASSWORD    "venizao123"
 
-#define HOST_NAME   "192.168.0.30"
+#define HOST_NAME   "192.168.0.27"
 #define HOST_PORT   (8090)
 //configurações do wifi
 
@@ -105,21 +105,21 @@ void loop(void)
             if(str.indexOf("shutdown_relays") != -1){
                 Serial.println("DESLIGANDO TUDO");
                 digitalWrite(10, HIGH); 
-                delay(100);
+                delay(200);
                 digitalWrite(11, HIGH); 
-                delay(100);
+                delay(200);
                 digitalWrite(12, HIGH);
-                delay(100); 
+                delay(200); 
             }
 
             if(str.indexOf("up_app_relays") != -1){
                 Serial.println("LIGANDO TUDO");
                 digitalWrite(10, LOW);
-                delay(100); 
+                delay(200); 
                 digitalWrite(11, LOW);
-                delay(100); 
+                delay(200); 
                 digitalWrite(12, LOW);
-                delay(100); 
+                delay(200); 
             }
             
             if(str.indexOf("abre_rele_luz1") != -1){
@@ -170,10 +170,10 @@ void loop(void)
              
              retorno      = digitalRead(pinopir);   
              movimentacao = "\"movimentacao\" : \""+String(retorno)+"\" , ";
-             delay(100);
+             
              retorno2      = digitalRead(pinopir2);   
              movimentacao2 = "\"movimentacao2\" : \""+String(retorno2)+"\" } ";
-             delay(100);
+             
              //pega dados dos sensores
             
              //cria dados para envio do servidor
@@ -187,11 +187,12 @@ void loop(void)
              params = new char[paramsArduino.length()+1];
              strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
              //cria dados para envio do servidor
-
+             Serial.println(params); 
              //envia dados ao servidor
              if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
                 resetFunc();             
              }
+             
          }
         
          //desconecta do servidor
