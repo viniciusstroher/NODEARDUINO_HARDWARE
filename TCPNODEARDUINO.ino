@@ -3,12 +3,12 @@
 #include "ESP8266.h"
 
 //configurações do wifi
-//#define SSID        "COBRE"
-//#define PASSWORD    "robotica"
-#define SSID        "Venizao"
-#define PASSWORD    "venizao123"
+#define SSID        "COBRE"
+#define PASSWORD    "robotica"
+//#define SSID        "Venizao"
+//#define PASSWORD    "venizao123"
 
-#define HOST_NAME   "192.168.0.27"
+#define HOST_NAME   "192.168.0.30"
 #define HOST_PORT   (8090)
 //configurações do wifi
 
@@ -62,6 +62,8 @@ void setup(void)
     }
     dht.begin();
     dht2.begin();
+
+    delay(1000);
 }
 
 //variaveis do escopo
@@ -89,8 +91,11 @@ char* params;
 uint32_t len = 0;
 String str = "";
 
-void loop(void)
+
+
+void loop()
 {
+    
     //conecta ao servidor
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
         
@@ -188,6 +193,7 @@ void loop(void)
              strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
              //cria dados para envio do servidor
              Serial.println(params); 
+             
              //envia dados ao servidor
              if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
                 resetFunc();             
