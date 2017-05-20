@@ -3,9 +3,12 @@
 #include "ESP8266.h"
 
 //configurações do wifi
-#define SSID        "COBRE"
-#define PASSWORD    "robotica"
-#define HOST_NAME   "192.168.0.29"
+//#define SSID        "COBRE"
+//#define PASSWORD    "robotica"
+#define SSID        "Venizao"
+#define PASSWORD    "venizao123"
+
+#define HOST_NAME   "192.168.0.27"
 #define HOST_PORT   (8090)
 //configurações do wifi
 
@@ -30,7 +33,6 @@ int pinopir2 = 6;
 int retorno  = 0;
 int retorno2 = 0;
 
-
 //função de reset usada se der problema no esp8266 wifi
 void(* resetFunc) (void) = 0; 
 
@@ -51,7 +53,6 @@ void setup(void)
     wifi.setOprToStation();
     //conecta wifi
     if (wifi.joinAP(SSID, PASSWORD)) {
-        Serial.print("CONECTADO ! IP: ");       
         Serial.println(wifi.getLocalIP().c_str());
         if(!wifi.enableMUX()){
            resetFunc();
@@ -59,7 +60,6 @@ void setup(void)
     } else {
         resetFunc();
     }
-    
     dht.begin();
     dht2.begin();
 }
@@ -86,33 +86,40 @@ float t2              = 0;
 
 char* params;
 //variaveis do escopo
+uint32_t len = 0;
+String str = "";
 
 void loop(void)
 {
     //conecta ao servidor
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
         
-        buffer[128]  = {0};
+         buffer[128]  = {0};
          //recebe dados do servidor
-         uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 1000);         
+         len = wifi.recv(mux_id, buffer, sizeof(buffer), 500);         
          if (len > 0) {
             //executa reles se vier comando do servidor
-            String str = (char*)buffer;
-            Serial.println("Recebido: "+str); 
-
+             str = (char*)buffer;
+            
             //regra shutdown
             if(str.indexOf("shutdown_relays") != -1){
                 Serial.println("DESLIGANDO TUDO");
                 digitalWrite(10, HIGH); 
+                delay(100);
                 digitalWrite(11, HIGH); 
-                digitalWrite(12, HIGH); 
+                delay(100);
+                digitalWrite(12, HIGH);
+                delay(100); 
             }
 
             if(str.indexOf("up_app_relays") != -1){
                 Serial.println("LIGANDO TUDO");
-                digitalWrite(10, LOW); 
-                digitalWrite(11, LOW); 
-                digitalWrite(12, LOW); 
+                digitalWrite(10, LOW);
+                delay(100); 
+                digitalWrite(11, LOW);
+                delay(100); 
+                digitalWrite(12, LOW);
+                delay(100); 
             }
             
             if(str.indexOf("abre_rele_luz1") != -1){
@@ -143,21 +150,8 @@ void loop(void)
             if(str.indexOf("fecha_rele_luz3") != -1){
                 Serial.println("DESLIGANDO A LUZ 3");
                 digitalWrite(12, HIGH); 
-
             }
-  
-            if(str.indexOf("liga_ar_condicionado") != -1){
-                Serial.println("Ligando Ar");
-                
-            }
-
-             if(str.indexOf("liga_projetor") != -1){
-                Serial.println("Ligando Projetor");
-                
-            }
-            
-            //executa reles se vier comando do servidor
-            
+           
          }else{
 
              paramsArduino = "";
@@ -176,10 +170,11 @@ void loop(void)
              
              retorno      = digitalRead(pinopir);   
              movimentacao = "\"movimentacao\" : \""+String(retorno)+"\" , ";
-             
+             delay(100);
              retorno2      = digitalRead(pinopir2);   
              movimentacao2 = "\"movimentacao2\" : \""+String(retorno2)+"\" } ";
-            //pega dados dos sensores
+             delay(100);
+             //pega dados dos sensores
             
              //cria dados para envio do servidor
              paramsArduino.concat(luminosidade);
@@ -194,26 +189,19 @@ void loop(void)
              //cria dados para envio do servidor
 
              //envia dados ao servidor
-             if (wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
-               Serial.println("Enviando: "+paramsArduino);
-               
-             }else{
-               resetFunc();
+             if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
+                resetFunc();             
              }
          }
         
          //desconecta do servidor
          if (!wifi.releaseTCP(mux_id)) {
-          Serial.println("release tcp");
           resetFunc();
          }
+         
      } else {
-        Serial.println(" tcp not create");
         resetFunc();
-        
      }
-     //delay 1minuto
-     //delay(60000);
 }
 
 
