@@ -3,12 +3,12 @@
 #include "ESP8266.h"
 
 //configurações do wifi
-//#define SSID        "COBRE"
-//#define PASSWORD    "robotica"
-#define SSID        "Venizao"
-#define PASSWORD    "venizao123"
+#define SSID        "COBRE"
+#define PASSWORD    "robotica"
+//#define SSID        "Venizao"
+//#define PASSWORD    "venizao123"
 
-#define HOST_NAME   "192.168.0.27"
+#define HOST_NAME   "192.168.0.30"
 #define HOST_PORT   (8090)
 //configurações do wifi
 
