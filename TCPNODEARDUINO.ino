@@ -27,9 +27,6 @@ DHT dht2(DHTPIN2, DHTTYPE);
 int pinopir  = 7; 
 int pinopir2 = 6; 
 
-int retorno  = 0;
-int retorno2 = 0;
-
 //função de reset usada se der problema no esp8266 wifi
 void(* resetFunc) (void) = 0; 
 
@@ -132,12 +129,12 @@ void loop()
            
          }else{
 
-              String paramsArduino = "{ \"luminosidade\"  :  \"" +String(analogRead(A5))+"\"       , "    +
-                                    "  \"luminosidade2\"  : \""+String(analogRead(A6))+"\"         , "    +
-                                    "  \"temperatura\"    : \""+String(dht.readTemperature())+"\"  , "    +
-                                    "  \"temperatura2\"   : \""+String(dht2.readTemperature())+"\" , "    +
-                                    "  \"movimentacao\"   : \""+String(digitalRead(pinopir))+"\"   , "    +
-                                    "  \"movimentacao2\"  : \""+String(digitalRead(pinopir2))+"\" }  ";
+              String paramsArduino = "{ \"luminosidade\" : \"" +String(analogRead(A5))+"\","+
+                                    "  \"luminosidade2\" : \""+String(analogRead(A6))+"\","+
+                                    "  \"temperatura\" : \""+String(dht.readTemperature())+"\","+
+                                    "  \"temperatura2\" : \""+String(dht2.readTemperature())+"\","+
+                                    "  \"movimentacao\" : \""+String(digitalRead(pinopir))+"\","+
+                                    "  \"movimentacao2\" : \""+String(digitalRead(pinopir2))+"\"}";
 
              char* params = paramsArduino.c_str(); 
              Serial.println(paramsArduino);  
