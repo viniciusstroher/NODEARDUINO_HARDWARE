@@ -1,5 +1,6 @@
-#include "ESP8266.h"
+#include <MemoryFree.h>
 
+#include "ESP8266.h"
 //configurações do wifi
 //#define   SSID        "COBRE"
 //#define   PASSWORD    "robotica"
@@ -156,6 +157,7 @@ void loop()
      } else {
         resetFunc();
      }
+     freeMemory();
      delay(1000);
 }
 
