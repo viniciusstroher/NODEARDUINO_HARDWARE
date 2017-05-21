@@ -132,7 +132,7 @@ void loop()
            
          }else{
 
-              String paramsArduino = "{ \"luminosidade\"  :  \"" +String(analogRead(A5))+"\"        , "    +
+              String paramsArduino = "{ \"luminosidade\"  :  \"" +String(analogRead(A5))+"\"       , "    +
                                     "  \"luminosidade2\"  : \""+String(analogRead(A6))+"\"         , "    +
                                     "  \"temperatura\"    : \""+String(dht.readTemperature())+"\"  , "    +
                                     "  \"temperatura2\"   : \""+String(dht2.readTemperature())+"\" , "    +
