@@ -138,11 +138,8 @@ void loop()
                                     "  \"movimentacao\"   : \""+String(digitalRead(pinopir))+"\"   , "    +
                                     "  \"movimentacao2\"  : \""+String(digitalRead(pinopir2))+"\" }  ";
 
-             char* params = new char[paramsArduino.length()+1];
-             strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
-             
-             //cria dados para envio do servidor
-             Serial.println(params); 
+             char* params = paramsArduino.c_str(); 
+             Serial.println(paramsArduino);  
              
              //envia dados ao servidor
              if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
