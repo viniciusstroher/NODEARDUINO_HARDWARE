@@ -138,8 +138,7 @@ void loop()
 
              char* params = paramsArduino.c_str(); 
              Serial.println(paramsArduino);  
-             
-             //envia dados ao servidor
+
              if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
                 resetFunc();             
              }
