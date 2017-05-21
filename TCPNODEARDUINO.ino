@@ -64,28 +64,18 @@ void setup(void)
     delay(1000);
 }
 
-//variaveis do escopo
-String paramsArduino;
-char*  params;
-
-uint8_t buffer[128];
-
-//variaveis do escopo
-uint32_t len = 0;
-//String str = "";
-
 void loop()
 {
     
     //conecta ao servidor
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
-        
-         buffer[128]  = {0};
-         //recebe dados do servidor
-         len = wifi.recv(mux_id, buffer, sizeof(buffer), 500);         
+      
+         uint8_t buffer[128]  = {0};
+         uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 500);         
+      
          if (len > 0) {
              char* str  = (char*)buffer;
-            
+        
             //regra shutdown
             if (strcmp (str,"shutdown_relays") == 0) {
 
@@ -141,16 +131,16 @@ void loop()
            
          }else{
 
-              paramsArduino       = "{ \"luminosidade\"  :  \"" +String(analogRead(A5))+"\"        , "    +
+              String paramsArduino = "{ \"luminosidade\"  :  \"" +String(analogRead(A5))+"\"        , "    +
                                     "  \"luminosidade2\"  : \""+String(analogRead(A6))+"\"         , "    +
                                     "  \"temperatura\"    : \""+String(dht.readTemperature())+"\"  , "    +
                                     "  \"temperatura2\"   : \""+String(dht2.readTemperature())+"\" , "    +
                                     "  \"movimentacao\"   : \""+String(digitalRead(pinopir))+"\"   , "    +
                                     "  \"movimentacao2\"  : \""+String(digitalRead(pinopir2))+"\" }  ";
-      
-             
-             params = new char[paramsArduino.length()+1];
+
+             char* params = new char[paramsArduino.length()+1];
              strncpy(params, paramsArduino.c_str(), paramsArduino.length()+1);
+             
              //cria dados para envio do servidor
              Serial.println(params); 
              
