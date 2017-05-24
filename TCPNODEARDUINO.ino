@@ -128,7 +128,7 @@ void loop()
                                     "  \"movimentacao2\" : \""+String(digitalRead(pinopir2))+"\"}";
 
              const char* params = paramsArduino.c_str(); 
-             paramsArduino = "";
+             paramsArduino = NULL;
              if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
                 resetFunc();             
              }
