@@ -72,7 +72,7 @@ void loop()
          uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 500);         
       
          if (len > 0) {
-             char* str  = (char*)buffer;
+             const char* str  = (char*)buffer;
         
             //regra shutdown
             if (strcmp (str,"shutdown_relays") == 0) {
