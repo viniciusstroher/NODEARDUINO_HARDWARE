@@ -28,7 +28,7 @@ int pinopir  = 7;
 int pinopir2 = 6; 
 
 String paramsArduino;
-char* params;
+const char* params;
 //função de reset usada se der problema no esp8266 wifi
 void(* resetFunc) (void) = 0; 
 
