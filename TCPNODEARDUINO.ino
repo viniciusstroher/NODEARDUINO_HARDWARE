@@ -1,5 +1,3 @@
-#include <MemoryFree.h>
-
 #include "ESP8266.h"
 //configurações do wifi
 //#define   SSID        "COBRE"
@@ -147,7 +145,7 @@ void loop()
      } else {
         resetFunc();
      }
-     freeMemory();
+   
      delay(1000);
 }
 
