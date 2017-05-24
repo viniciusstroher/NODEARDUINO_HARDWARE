@@ -75,20 +75,20 @@ void loop()
             if (strcmp ((char*)buffer,"shutdown_relays") == 0) {
 
                 digitalWrite(10, HIGH); 
-                delay(200);
+                delay(100);
                 digitalWrite(11, HIGH); 
-                delay(200);
+                delay(100);
                 digitalWrite(12, HIGH);
-                delay(200); 
+                delay(100); 
             }
     
             if (strcmp ((char*)buffer,"up_app_relays") == 0) {
                 digitalWrite(10, LOW);
-                delay(200); 
+                delay(100); 
                 digitalWrite(11, LOW);
-                delay(200); 
+                delay(100); 
                 digitalWrite(12, LOW);
-                delay(200); 
+                delay(100); 
             }
 
             if (strcmp ((char*)buffer,"abre_rele_luz1") == 0) {
