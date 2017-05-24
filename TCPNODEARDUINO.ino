@@ -77,7 +77,6 @@ void loop()
             //regra shutdown
             if (strcmp (str,"shutdown_relays") == 0) {
 
-                Serial.println("DESLIGANDO TUDO");
                 digitalWrite(10, HIGH); 
                 delay(200);
                 digitalWrite(11, HIGH); 
@@ -87,8 +86,6 @@ void loop()
             }
     
             if (strcmp (str,"up_app_relays") == 0) {
-
-                Serial.println("LIGANDO TUDO");
                 digitalWrite(10, LOW);
                 delay(200); 
                 digitalWrite(11, LOW);
@@ -98,32 +95,26 @@ void loop()
             }
 
             if (strcmp (str,"abre_rele_luz1") == 0) {
-                Serial.println("LIGANDO A LUZ");
                 digitalWrite(10, LOW);
             }
 
             if (strcmp (str,"fecha_rele_luz1") == 0) {
-                Serial.println("DESLIGANDO A LUZ");
                 digitalWrite(10, HIGH); 
             }
 
             if (strcmp (str,"abre_rele_luz2") == 0) {
-                Serial.println("LIGANDO A LUZ 2");
                 digitalWrite(11, LOW);
             }
 
             if (strcmp (str,"fecha_rele_luz2") == 0) {
-                Serial.println("DESLIGANDO A LUZ 2");
                 digitalWrite(11, HIGH); 
             }
 
             if (strcmp (str,"abre_rele_luz3") == 0) {
-                Serial.println("LIGANDO A LUZ 3");
                 digitalWrite(12, LOW);
             }
 
             if (strcmp (str,"fecha_rele_luz3") == 0) {
-                Serial.println("DESLIGANDO A LUZ 3");
                 digitalWrite(12, HIGH); 
             }
            
@@ -136,9 +127,8 @@ void loop()
                                     "  \"movimentacao\" : \""+String(digitalRead(pinopir))+"\","+
                                     "  \"movimentacao2\" : \""+String(digitalRead(pinopir2))+"\"}";
 
-             char* params = paramsArduino.c_str(); 
-             Serial.println(paramsArduino);  
-
+             const char* params = paramsArduino.c_str(); 
+            
              if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
                 resetFunc();             
              }
@@ -156,5 +146,4 @@ void loop()
      freeMemory();
      delay(1000);
 }
-
 
