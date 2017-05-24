@@ -1,3 +1,5 @@
+#include <MemoryFree.h>
+
 #include "ESP8266.h"
 //configurações do wifi
 //#define   SSID        "COBRE"
@@ -69,7 +71,7 @@ void loop()
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
       
          uint8_t buffer[128]  = {0};
-         uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 500);         
+         uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 700);         
       
          if (len > 0) {
              const char* str  = (char*)buffer;
@@ -134,7 +136,7 @@ void loop()
              if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
                 resetFunc();             
              }
-             
+             freeMemory();
          }
         
          //desconecta do servidor
@@ -145,7 +147,7 @@ void loop()
      } else {
         resetFunc();
      }
-   
-     delay(1000);
+     freeMemory();
+
 }
 
