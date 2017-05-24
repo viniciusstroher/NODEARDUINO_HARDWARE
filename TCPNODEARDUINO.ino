@@ -24,17 +24,14 @@ DHT dht(DHTPIN, DHTTYPE);
 DHT dht2(DHTPIN2, DHTTYPE);
 //DECLARACAO DOS DHT
 
-int pinopir  = 7; 
-int pinopir2 = 6; 
-
 //função de reset usada se der problema no esp8266 wifi
 void(* resetFunc) (void) = 0; 
 
 void setup(void)
 {
     //set pino pir
-    pinMode(pinopir, INPUT);
-    pinMode(pinopir2, INPUT);
+    pinMode(7, INPUT);
+    pinMode(6, INPUT);
     
     //set pino rele
     pinMode(10, OUTPUT);
@@ -69,13 +66,13 @@ void loop()
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
       
          uint8_t buffer[128]  = {0};
-         uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 700);         
+         uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 500);         
       
          if (len > 0) {
              const char* str  = (char*)buffer;
         
             //regra shutdown
-            if (strcmp (str,"shutdown_relays") == 0) {
+            if (strcmp ((char*)buffer,"shutdown_relays") == 0) {
 
                 digitalWrite(10, HIGH); 
                 delay(200);
@@ -85,7 +82,7 @@ void loop()
                 delay(200); 
             }
     
-            if (strcmp (str,"up_app_relays") == 0) {
+            if (strcmp ((char*)buffer,"up_app_relays") == 0) {
                 digitalWrite(10, LOW);
                 delay(200); 
                 digitalWrite(11, LOW);
@@ -94,27 +91,27 @@ void loop()
                 delay(200); 
             }
 
-            if (strcmp (str,"abre_rele_luz1") == 0) {
+            if (strcmp ((char*)buffer,"abre_rele_luz1") == 0) {
                 digitalWrite(10, LOW);
             }
 
-            if (strcmp (str,"fecha_rele_luz1") == 0) {
+            if (strcmp ((char*)buffer,"fecha_rele_luz1") == 0) {
                 digitalWrite(10, HIGH); 
             }
 
-            if (strcmp (str,"abre_rele_luz2") == 0) {
+            if (strcmp ((char*)buffer,"abre_rele_luz2") == 0) {
                 digitalWrite(11, LOW);
             }
 
-            if (strcmp (str,"fecha_rele_luz2") == 0) {
+            if (strcmp ((char*)buffer,"fecha_rele_luz2") == 0) {
                 digitalWrite(11, HIGH); 
             }
 
-            if (strcmp (str,"abre_rele_luz3") == 0) {
+            if (strcmp ((char*)buffer,"abre_rele_luz3") == 0) {
                 digitalWrite(12, LOW);
             }
 
-            if (strcmp (str,"fecha_rele_luz3") == 0) {
+            if (strcmp ((char*)buffer,"fecha_rele_luz3") == 0) {
                 digitalWrite(12, HIGH); 
             }
            
@@ -124,17 +121,15 @@ void loop()
                                     "  \"luminosidade2\" : \""+String(analogRead(A6))+"\","+
                                     "  \"temperatura\" : \""  +String(dht.readTemperature())+"\","+
                                     "  \"temperatura2\" : \"" +String(dht2.readTemperature())+"\","+
-                                    "  \"movimentacao\" : \"" +String(digitalRead(pinopir))+"\","+
-                                    "  \"movimentacao2\" : \""+String(digitalRead(pinopir2))+"\"}";
-
+                                    "  \"movimentacao\" : \"" +String(digitalRead(7))+"\","+
+                                    "  \"movimentacao2\" : \""+String(digitalRead(6))+"\"}";
+             
              const char* params = paramsArduino.c_str(); 
              paramsArduino = "";
-             params = NULL;
-             
              if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
                 resetFunc();             
              }
-             freeMemory();
+            
          }
         
          //desconecta do servidor
