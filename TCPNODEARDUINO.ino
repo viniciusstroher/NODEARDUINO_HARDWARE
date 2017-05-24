@@ -28,7 +28,7 @@ int pinopir  = 7;
 int pinopir2 = 6; 
 
 String paramsArduino;
-
+char* params;
 //função de reset usada se der problema no esp8266 wifi
 void(* resetFunc) (void) = 0; 
 
@@ -129,8 +129,10 @@ void loop()
                                     "  \"movimentacao\" : \""+String(digitalRead(pinopir))+"\","+
                                     "  \"movimentacao2\" : \""+String(digitalRead(pinopir2))+"\"}";
 
-             const char* params = paramsArduino.c_str(); 
+             params = paramsArduino.c_str(); 
              paramsArduino = "";
+             params = NULL;
+             
              if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
                 resetFunc();             
              }
