@@ -1,5 +1,5 @@
 #include <MemoryFree.h>
-
+#include   avr/wdt.h 
 #include "ESP8266.h"
 //configurações do wifi
 //#define   SSID        "COBRE"
@@ -60,7 +60,7 @@ void setup(void)
     }
     dht.begin();
     dht2.begin();
-    delay(1000);
+    wdt_enable(WDTO_8S); 
 }
 
 void loop()
@@ -78,20 +78,20 @@ void loop()
             if (strcmp ((char*)buffer,"shutdown_relays") == 0) {
 
                 digitalWrite(10, HIGH); 
-                delay(100);
+              
                 digitalWrite(11, HIGH); 
-                delay(100);
+               
                 digitalWrite(12, HIGH);
-                delay(100); 
+
             }
     
             if (strcmp ((char*)buffer,"up_app_relays") == 0) {
                 digitalWrite(10, LOW);
-                delay(100); 
+                
                 digitalWrite(11, LOW);
-                delay(100); 
+                
                 digitalWrite(12, LOW);
-                delay(100); 
+               
             }
 
             if (strcmp ((char*)buffer,"abre_rele_luz1") == 0) {
@@ -117,7 +117,8 @@ void loop()
             if (strcmp ((char*)buffer,"fecha_rele_luz3") == 0) {
                 digitalWrite(12, HIGH); 
             }
-           
+            
+            wdt_reset();
          }else{
         
              /*String paramsArduino = "{ \"luminosidade\" : \"" +String(analogRead(A5))+"\","+
@@ -135,10 +136,10 @@ void loop()
             digitalRead(7),
             digitalRead(6)
             );
-            szBuf[sizeBuf] = '\0';
+            //szBuf[sizeBuf] = '\0';
              
              //const char* params = paramsArduino.c_str(); 
-             
+             wdt_reset();
              if (!wifi.send(mux_id, (const uint8_t*)szBuf, strlen(szBuf))) {
                 resetFunc();             
              }
@@ -153,6 +154,7 @@ void loop()
      } else {
         resetFunc();
      }
+     wdt_reset();
      freeMemory();
 
 }
