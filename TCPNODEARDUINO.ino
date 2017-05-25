@@ -27,6 +27,10 @@ DHT dht2(DHTPIN2, DHTTYPE);
 //função de reset usada se der problema no esp8266 wifi
 void(* resetFunc) (void) = 0; 
 
+const size_t sizeBuf = 228;
+char szBuf[228+1];
+
+
 void setup(void)
 {
     //set pino pir
@@ -65,7 +69,8 @@ void loop()
     //conecta ao servidor
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
       
-         uint8_t buffer[128]  = {0};
+         //uint8_t buffer[128]  = {0};
+         uint8_t buffer[20]  = {0};
          uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 500);         
       
          if (len > 0) {
@@ -114,17 +119,27 @@ void loop()
             }
            
          }else{
-
-             String paramsArduino = "{ \"luminosidade\" : \"" +String(analogRead(A5))+"\","+
+        
+             /*String paramsArduino = "{ \"luminosidade\" : \"" +String(analogRead(A5))+"\","+
                                     "  \"luminosidade2\" : \""+String(analogRead(A6))+"\","+
                                     "  \"temperatura\" : \""  +String(dht.readTemperature())+"\","+
                                     "  \"temperatura2\" : \"" +String(dht2.readTemperature())+"\","+
                                     "  \"movimentacao\" : \"" +String(digitalRead(7))+"\","+
                                     "  \"movimentacao2\" : \""+String(digitalRead(6))+"\"}";
+            */
+            snprintf(szBuf, sizeBuf, "{ \"luminosidade\" : \" %d \", \"luminosidade2\" : \" %d \", \"temperatura\" : \" %0.2f\", \"temperatura2\" : \" %0.2f \", \"movimentacao\" : \" %d \"  \"movimentacao2\" : \" %d \"}", 
+            analogRead(A5),
+            analogRead(A6),
+            dht.readTemperature(),
+            dht2.readTemperature(),
+            digitalRead(7),
+            digitalRead(6)
+            );
+            szBuf[sizeBuf] = '\0';
              
-             const char* params = paramsArduino.c_str(); 
+             //const char* params = paramsArduino.c_str(); 
              
-             if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
+             if (!wifi.send(mux_id, (const uint8_t*)szBuf, strlen(szBuf))) {
                 resetFunc();             
              }
             
