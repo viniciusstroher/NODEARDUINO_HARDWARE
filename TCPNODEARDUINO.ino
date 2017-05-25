@@ -118,7 +118,7 @@ void loop()
                 digitalWrite(12, HIGH); 
             }
             
-            wdt_reset();
+            
          }else{
         
              /*String paramsArduino = "{ \"luminosidade\" : \"" +String(analogRead(A5))+"\","+
@@ -139,7 +139,7 @@ void loop()
             //szBuf[sizeBuf] = '\0';
              
              //const char* params = paramsArduino.c_str(); 
-             wdt_reset();
+             
              if (!wifi.send(mux_id, (const uint8_t*)szBuf, strlen(szBuf))) {
                 resetFunc();             
              }
