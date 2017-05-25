@@ -69,8 +69,6 @@ void loop()
          uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 500);         
       
          if (len > 0) {
-             const char* str  = (char*)buffer;
-        
             //regra shutdown
             if (strcmp ((char*)buffer,"shutdown_relays") == 0) {
 
@@ -125,7 +123,7 @@ void loop()
                                     "  \"movimentacao2\" : \""+String(digitalRead(6))+"\"}";
              
              const char* params = paramsArduino.c_str(); 
-             paramsArduino = "";
+             
              if (!wifi.send(mux_id, (const uint8_t*)params, strlen(params))) {
                 resetFunc();             
              }
