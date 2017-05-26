@@ -1,5 +1,5 @@
 #include <MemoryFree.h>
-#include   <avr/wdt.h> 
+
 #include "ESP8266.h"
 //configurações do wifi
 //#define   SSID        "COBRE"
@@ -60,7 +60,7 @@ void setup(void)
     }
     dht.begin();
     dht2.begin();
-    wdt_enable(WDTO_8S); 
+ 
 }
 
 void loop()
@@ -127,8 +127,9 @@ void loop()
                                     "  \"temperatura2\" : \"" +String(dht2.readTemperature())+"\","+
                                     "  \"movimentacao\" : \"" +String(digitalRead(7))+"\","+
                                     "  \"movimentacao2\" : \""+String(digitalRead(6))+"\"}";
-            */                                                                                                                                  
-            snprintf(szBuf, sizeBuf, "{ \"luminosidade\" : \" %d \", \"luminosidade2\" : \" %d \", \"temperatura\" : \" %.2f\", \"temperatura2\" : \" %.2f \", \"movimentacao\" : \" %d \"  \"movimentacao2\" : \" %d \"}", 
+            */                                              
+            Serial.println(dht.readTemperature());                                                                                    
+            snprintf(szBuf, sizeBuf, "{ \"luminosidade\" : \" %d \", \"luminosidade2\" : \" %d \", \"temperatura\" : \" %f \", \"temperatura2\" : \" %f \", \"movimentacao\" : \" %d \"  \"movimentacao2\" : \" %d \"}", 
             analogRead(A5),
             analogRead(A6),
             dht.readTemperature(),
@@ -154,7 +155,7 @@ void loop()
      } else {
         resetFunc();
      }
-     wdt_reset();
+     
      freeMemory();
 
 }
