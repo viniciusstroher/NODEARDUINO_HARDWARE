@@ -1,5 +1,5 @@
 #include <MemoryFree.h>
-#include   <avr/wdt.h>
+#include   <avr/wdt.h> 
 #include "ESP8266.h"
 //configurações do wifi
 //#define   SSID        "COBRE"
@@ -127,8 +127,8 @@ void loop()
                                     "  \"temperatura2\" : \"" +String(dht2.readTemperature())+"\","+
                                     "  \"movimentacao\" : \"" +String(digitalRead(7))+"\","+
                                     "  \"movimentacao2\" : \""+String(digitalRead(6))+"\"}";
-            */
-            snprintf(szBuf, sizeBuf, "{ \"luminosidade\" : \" %d \", \"luminosidade2\" : \" %d \", \"temperatura\" : \" %0.2f\", \"temperatura2\" : \" %0.2f \", \"movimentacao\" : \" %d \"  \"movimentacao2\" : \" %d \"}", 
+            */                                                                                                                                  
+            snprintf(szBuf, sizeBuf, "{ \"luminosidade\" : \" %d \", \"luminosidade2\" : \" %d \", \"temperatura\" : \" %.2f\", \"temperatura2\" : \" %.2f \", \"movimentacao\" : \" %d \"  \"movimentacao2\" : \" %d \"}", 
             analogRead(A5),
             analogRead(A6),
             dht.readTemperature(),
@@ -139,7 +139,7 @@ void loop()
             //szBuf[sizeBuf] = '\0';
              
              //const char* params = paramsArduino.c_str(); 
-             
+             Serial.println(szBuf);
              if (!wifi.send(mux_id, (const uint8_t*)szBuf, strlen(szBuf))) {
                 resetFunc();             
              }
