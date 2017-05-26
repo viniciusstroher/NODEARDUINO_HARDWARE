@@ -135,7 +135,7 @@ void loop()
             dtostrf(dht.readTemperature(), 4, 2, temp1);
             dtostrf(dht2.readTemperature(), 4, 2, temp2);
                                                   
-            Serial.println(dht.readTemperature());                                                                                    
+            //Serial.println(dht.readTemperature());                                                                                    
             snprintf(szBuf, sizeBuf, "{ \"luminosidade\" : \" %d \", \"luminosidade2\" : \" %d \", \"temperatura\" : \"%s\", \"temperatura2\" : \"%s\", \"movimentacao\" : \" %d \"  \"movimentacao2\" : \" %d \"}", 
             analogRead(A5),
             analogRead(A6),
