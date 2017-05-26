@@ -70,7 +70,7 @@ void loop()
     if (wifi.createTCP(mux_id, HOST_NAME, HOST_PORT)) {
       
          //uint8_t buffer[128]  = {0};
-         uint8_t buffer[20]  = {0};
+         uint8_t buffer[25]  = {0};
          uint32_t len = wifi.recv(mux_id, buffer, sizeof(buffer), 500);         
       
          if (len > 0) {
