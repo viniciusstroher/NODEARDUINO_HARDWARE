@@ -28,8 +28,8 @@ DHT dht2(DHTPIN2, DHTTYPE);
 void(* resetFunc) (void) = 0; 
 
 const size_t sizeBuf = 228;
-char szBuf[228+1];
-
+char szBuf[228];
+char temp1[6],temp2[6];
 
 void setup(void)
 {
@@ -127,19 +127,24 @@ void loop()
                                     "  \"temperatura2\" : \"" +String(dht2.readTemperature())+"\","+
                                     "  \"movimentacao\" : \"" +String(digitalRead(7))+"\","+
                                     "  \"movimentacao2\" : \""+String(digitalRead(6))+"\"}";
-            */                                              
+            */      
+
+            
+
+            /* 4 is mininum width, 2 is precision; float value is copied onto str_temp*/
+            dtostrf(dht.readTemperature(), 4, 2, temp1);
+            dtostrf(dht2.readTemperature(), 4, 2, temp2);
+                                                  
             Serial.println(dht.readTemperature());                                                                                    
-            snprintf(szBuf, sizeBuf, "{ \"luminosidade\" : \" %d \", \"luminosidade2\" : \" %d \", \"temperatura\" : \" %f \", \"temperatura2\" : \" %f \", \"movimentacao\" : \" %d \"  \"movimentacao2\" : \" %d \"}", 
+            snprintf(szBuf, sizeBuf, "{ \"luminosidade\" : \" %d \", \"luminosidade2\" : \" %d \", \"temperatura\" : \"%s\", \"temperatura2\" : \"%s\", \"movimentacao\" : \" %d \"  \"movimentacao2\" : \" %d \"}", 
             analogRead(A5),
             analogRead(A6),
-            dht.readTemperature(),
-            dht2.readTemperature(),
+            temp1,
+            temp2,
             digitalRead(7),
             digitalRead(6)
             );
-            //szBuf[sizeBuf] = '\0';
-             
-             //const char* params = paramsArduino.c_str(); 
+            
              Serial.println(szBuf);
              if (!wifi.send(mux_id, (const uint8_t*)szBuf, strlen(szBuf))) {
                 resetFunc();             
